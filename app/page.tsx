@@ -10,7 +10,7 @@ import Footer from "./components/Footer"
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-purple-900 dark:to-slate-900 transition-all duration-500">
       <Header />
       <main>
         <Hero />
