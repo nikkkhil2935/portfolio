@@ -1,9 +1,21 @@
 "use client"
 
-import { ArrowDown, Github, Linkedin, Download } from "lucide-react"
+import { ArrowDown, Github, Linkedin, Download, Sparkles } from "lucide-react"
 import { motion } from "framer-motion"
+import { useEffect, useState } from "react"
 
 export default function Hero() {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+
+  useEffect(() => {
+    const updateMousePosition = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY })
+    }
+
+    window.addEventListener("mousemove", updateMousePosition)
+    return () => window.removeEventListener("mousemove", updateMousePosition)
+  }, [])
+
   const scrollToAbout = () => {
     const element = document.getElementById("about")
     if (element) {
@@ -13,9 +25,7 @@ export default function Hero() {
 
   const downloadCV = async () => {
     try {
-      // Import jsPDF dynamically to avoid SSR issues
       const { jsPDF } = await import("jspdf")
-
       const doc = new jsPDF()
 
       // Set font
@@ -186,12 +196,55 @@ export default function Hero() {
   }
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 pt-20 relative overflow-hidden">
-      {/* Animated background elements */}
+    <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
+      {/* Dynamic background with parallax effect */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-purple-900 dark:to-slate-900">
+        <div className="absolute inset-0">
+          <motion.div
+            className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-500/20 dark:bg-blue-500/10 rounded-full blur-3xl"
+            animate={{
+              x: mousePosition.x * 0.02,
+              y: mousePosition.y * 0.02,
+            }}
+            transition={{ type: "spring", stiffness: 50, damping: 20 }}
+          />
+          <motion.div
+            className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 dark:bg-purple-500/10 rounded-full blur-3xl"
+            animate={{
+              x: mousePosition.x * -0.02,
+              y: mousePosition.y * -0.02,
+            }}
+            transition={{ type: "spring", stiffness: 50, damping: 20 }}
+          />
+          <motion.div
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-500/20 dark:bg-cyan-500/10 rounded-full blur-3xl"
+            animate={{
+              x: mousePosition.x * 0.01,
+              y: mousePosition.y * 0.01,
+            }}
+            transition={{ type: "spring", stiffness: 30, damping: 15 }}
+          />
+        </div>
+      </div>
+
+      {/* Floating particles */}
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl animate-pulse delay-500"></div>
+        {[...Array(15)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full opacity-30"
+            animate={{
+              x: Math.random() * window.innerWidth,
+              y: Math.random() * window.innerHeight,
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              duration: Math.random() * 3 + 2,
+              repeat: Infinity,
+              repeatType: "reverse",
+            }}
+          />
+        ))}
       </div>
 
       <div className="container mx-auto px-4 text-center relative z-10">
@@ -202,30 +255,41 @@ export default function Hero() {
             transition={{ duration: 0.8 }}
             className="mb-8"
           >
-            <div className="inline-block p-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-6">
-              <div className="bg-slate-900 px-6 py-2 rounded-full">
-                <span className="text-sm font-semibold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            <motion.div
+              className="inline-block p-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-6"
+              whileHover={{ scale: 1.05 }}
+              data-interactive
+            >
+              <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm px-6 py-2 rounded-full">
+                <span className="text-sm font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-blue-500" />
                   Available for opportunities
                 </span>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-5xl md:text-7xl font-bold text-white mb-6"
+            className="text-5xl md:text-7xl font-bold text-gray-900 dark:text-white mb-6"
           >
             Hi, I'm{" "}
-            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Nikhil</span>
+            <motion.span
+              className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent"
+              animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+              transition={{ duration: 5, repeat: Infinity }}
+            >
+              Nikhil
+            </motion.span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl md:text-2xl text-gray-200 mb-8 leading-relaxed font-medium"
+            className="text-xl md:text-2xl text-gray-700 dark:text-gray-200 mb-8 leading-relaxed font-medium"
           >
             Dynamic Web Developer specializing in responsive design and full-stack applications
           </motion.p>
@@ -234,7 +298,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-lg text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed"
+            className="text-lg text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed"
           >
             Proven problem-solver adept at optimizing performance and enhancing user experience. Strong collaborator
             committed to delivering high-quality projects.
@@ -246,32 +310,48 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.8 }}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
           >
-            <button
+            <motion.button
               onClick={downloadCV}
-              className="group bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold hover:shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 flex items-center gap-2 transform hover:scale-105"
+              className="group relative bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold hover:shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 flex items-center gap-2 overflow-hidden"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              data-interactive
             >
-              <Download size={20} />
-              View CV (PDF)
-              <div className="group-hover:translate-x-1 transition-transform duration-200">→</div>
-            </button>
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-purple-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <Download size={20} className="relative z-10" />
+              <span className="relative z-10">View CV (PDF)</span>
+              <motion.div
+                className="relative z-10"
+                animate={{ x: [0, 5, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                →
+              </motion.div>
+            </motion.button>
 
             <div className="flex gap-4">
-              <a
+              <motion.a
                 href="https://github.com/nikkkhil2935"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-4 bg-white/10 backdrop-blur-sm rounded-xl hover:bg-white/20 transition-all duration-300 border border-white/20 hover:scale-110 hover:border-white/40"
+                className="p-4 bg-white/10 dark:bg-black/10 backdrop-blur-sm rounded-xl hover:bg-white/20 dark:hover:bg-black/20 transition-all duration-300 border border-white/20 dark:border-white/10 group"
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                whileTap={{ scale: 0.9 }}
+                data-interactive
               >
-                <Github size={20} className="text-white" />
-              </a>
-              <a
+                <Github size={20} className="text-gray-700 dark:text-white group-hover:text-blue-500 transition-colors duration-300" />
+              </motion.a>
+              <motion.a
                 href="https://www.linkedin.com/in/nikhil-patil-139137258"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-4 bg-white/10 backdrop-blur-sm rounded-xl hover:bg-white/20 transition-all duration-300 border border-white/20 hover:scale-110 hover:border-white/40"
+                className="p-4 bg-white/10 dark:bg-black/10 backdrop-blur-sm rounded-xl hover:bg-white/20 dark:hover:bg-black/20 transition-all duration-300 border border-white/20 dark:border-white/10 group"
+                whileHover={{ scale: 1.1, rotate: -5 }}
+                whileTap={{ scale: 0.9 }}
+                data-interactive
               >
-                <Linkedin size={20} className="text-white" />
-              </a>
+                <Linkedin size={20} className="text-gray-700 dark:text-white group-hover:text-blue-500 transition-colors duration-300" />
+              </motion.a>
             </div>
           </motion.div>
 
@@ -280,9 +360,16 @@ export default function Hero() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 1 }}
             onClick={scrollToAbout}
-            className="animate-bounce text-white/60 hover:text-white transition-colors duration-200"
+            className="text-gray-600 dark:text-white/60 hover:text-gray-800 dark:hover:text-white transition-colors duration-200 group"
+            whileHover={{ y: 5 }}
+            data-interactive
           >
-            <ArrowDown size={32} />
+            <motion.div
+              animate={{ y: [0, 10, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <ArrowDown size={32} className="group-hover:text-blue-500 transition-colors duration-300" />
+            </motion.div>
           </motion.button>
         </div>
       </div>
