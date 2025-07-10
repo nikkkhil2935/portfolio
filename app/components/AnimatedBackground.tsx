@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
+import React, { useEffect, useState } from "react"
 import { motion } from "framer-motion"
-import { useEffect, useState } from "react"
 
 interface Particle {
   id: number
@@ -16,6 +16,7 @@ export default function AnimatedBackground() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const updateMousePosition = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY })
     }
@@ -25,6 +26,7 @@ export default function AnimatedBackground() {
   }, [])
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const createParticles = () =>
       Array.from({ length: 25 }).map((_, i) => ({
         id: i,

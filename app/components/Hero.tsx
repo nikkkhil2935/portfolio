@@ -1,13 +1,15 @@
-"use client"
+/// <reference types="react" />
 
+import React, { useEffect, useState } from "react"
 import { ArrowDown, Github, Linkedin, Download, Sparkles } from "lucide-react"
 import { motion } from "framer-motion"
-import { useEffect, useState } from "react"
+import jsPDF from "jspdf"
 
 export default function Hero() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const updateMousePosition = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY })
     }
@@ -25,7 +27,6 @@ export default function Hero() {
 
   const downloadCV = async () => {
     try {
-      const { jsPDF } = await import("jspdf")
       const doc = new jsPDF()
 
       // Set font
@@ -181,7 +182,9 @@ export default function Hero() {
       // Open PDF in new tab instead of downloading
       const pdfBlob = doc.output("blob")
       const pdfUrl = URL.createObjectURL(pdfBlob)
-      window.open(pdfUrl, "_blank")
+      if (typeof window !== "undefined") {
+        window.open(pdfUrl, "_blank")
+      }
     } catch (error) {
       console.error("Error generating PDF:", error)
       // Fallback to text file if PDF generation fails

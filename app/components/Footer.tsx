@@ -1,14 +1,17 @@
-"use client"
+/// <reference types="react" />
 
+import React from "react";
 import { Github, Linkedin, Mail, Heart, ArrowUp } from "lucide-react"
 import { motion } from "framer-motion"
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }
+  const handleScrollToTop = () => {
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   return (
     <footer className="bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white relative overflow-hidden">
@@ -30,7 +33,7 @@ export default function Footer() {
               viewport={{ once: true }}
             >
               <motion.button
-                onClick={scrollToTop}
+                onClick={handleScrollToTop}
                 className="group inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-xl rounded-full border border-white/20 hover:bg-white/20 transition-all duration-300"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}

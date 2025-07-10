@@ -3,7 +3,8 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import AnimatedBackground from "./components/AnimatedBackground"
+import dynamic from "next/dynamic";
+const AnimatedBackground = dynamic(() => import("./components/AnimatedBackground"), { ssr: false });
 import MouseFollower from "./components/MouseFollower"
 
 const inter = Inter({ subsets: ["latin"] })

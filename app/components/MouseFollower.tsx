@@ -1,13 +1,14 @@
-"use client"
+/// <reference types="react" />
 
+import React, { useEffect, useState } from "react"
 import { motion } from "framer-motion"
-import { useEffect, useState } from "react"
 
 export default function MouseFollower() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [isHovering, setIsHovering] = useState(false)
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const updateMousePosition = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY })
     }

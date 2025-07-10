@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Menu, X } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { Menu, X } from "lucide-react";
 import ThemeToggle from "./ThemeToggle"
 
 export default function Header() {
@@ -11,6 +11,7 @@ export default function Header() {
   const [activeSection, setActiveSection] = useState("about")
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50)
 
@@ -30,6 +31,7 @@ export default function Header() {
     }
 
     window.addEventListener("scroll", handleScroll)
+    setIsScrolled(window.scrollY > 50);
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
@@ -113,68 +115,66 @@ export default function Header() {
               whileTap={{ scale: 0.95 }}
               data-interactive
             >
-              <AnimatePresence mode="wait">
-                {isMenuOpen ? (
-                  <motion.div
-                    key="close"
-                    initial={{ rotate: -90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: 90, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <X size={24} />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="menu"
-                    initial={{ rotate: 90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: -90, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Menu size={24} />
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {/* AnimatePresence is removed as per the new_code, but the component is kept */}
+              {isMenuOpen ? (
+                <motion.div
+                  key="close"
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <X size={24} />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="menu"
+                  initial={{ rotate: 90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: -90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Menu size={24} />
+                </motion.div>
+              )}
             </motion.button>
           </div>
         </div>
 
         {/* Mobile Navigation */}
-        <AnimatePresence>
-          {isMenuOpen && (
-            <motion.nav
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="lg:hidden mt-4 overflow-hidden"
-            >
-              <div className="bg-white/10 dark:bg-black/10 backdrop-blur-xl rounded-2xl p-4 border border-white/20 dark:border-white/10 shadow-xl">
-                <div className="flex flex-col space-y-2">
-                  {navItems.map((item, index) => (
-                    <motion.button
-                      key={item}
-                      onClick={() => scrollToSection(item.toLowerCase())}
-                      className={`text-left px-4 py-3 rounded-xl font-medium transition-all duration-300 ${
-                        activeSection === item.toLowerCase()
-                          ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg"
-                          : "text-gray-600 dark:text-gray-300 hover:text-white hover:bg-white/10 dark:hover:bg-black/10"
-                      }`}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.3, delay: index * 0.1 }}
-                      whileHover={{ x: 5 }}
-                      data-interactive
-                    >
-                      {item}
-                    </motion.button>
-                  ))}
-                </div>
+        {/* AnimatePresence is removed as per the new_code, but the component is kept */}
+        {isMenuOpen && (
+          <motion.nav
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="lg:hidden mt-4 overflow-hidden"
+          >
+            <div className="bg-white/10 dark:bg-black/10 backdrop-blur-xl rounded-2xl p-4 border border-white/20 dark:border-white/10 shadow-xl">
+              <div className="flex flex-col space-y-2">
+                {navItems.map((item, index) => (
+                  <motion.button
+                    key={item}
+                    onClick={() => scrollToSection(item.toLowerCase())}
+                    className={`text-left px-4 py-3 rounded-xl font-medium transition-all duration-300 ${
+                      activeSection === item.toLowerCase()
+                        ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg"
+                        : "text-gray-600 dark:text-gray-300 hover:text-white hover:bg-white/10 dark:hover:bg-black/10"
+                    }`}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                    whileHover={{ x: 5 }}
+                    data-interactive
+                  >
+                    {item}
+                  </motion.button>
+                ))}
               </div>
-            </motion.nav>
-          )}
-        </AnimatePresence>
+            </div>
+          </motion.nav>
+        )}
       </div>
     </motion.header>
   )
