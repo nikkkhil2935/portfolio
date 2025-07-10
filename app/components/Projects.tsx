@@ -1,8 +1,8 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { ExternalLink, Github, Sparkles, Code, Zap, Users } from "lucide-react"
-import { useState } from "react"
+import { ExternalLink, Github, Sparkles, Code, Zap, Users, Calendar, Star } from "lucide-react"
+import { useState, useEffect } from "react"
 
 const projects = [
   {
@@ -16,6 +16,8 @@ const projects = [
     image: "/placeholder.svg",
     category: "AI/ML",
     status: "Live",
+    year: "2024",
+    featured: true,
     features: ["Business Validation", "AI Analysis", "MVP Testing", "User Analytics"],
     gradient: "from-blue-500 to-purple-600",
     icon: <Sparkles className="w-6 h-6" />,
@@ -31,6 +33,8 @@ const projects = [
     image: "/placeholder.svg",
     category: "E-commerce",
     status: "Live",
+    year: "2024",
+    featured: true,
     features: ["Product Catalog", "Shopping Cart", "Order Management", "User Reviews"],
     gradient: "from-purple-500 to-pink-600",
     icon: <Code className="w-6 h-6" />,
@@ -46,6 +50,8 @@ const projects = [
     image: "/placeholder.svg",
     category: "Web App",
     status: "Live",
+    year: "2024",
+    featured: false,
     features: ["Recipe Search", "User Profiles", "Favorites", "Recipe Sharing"],
     gradient: "from-green-500 to-blue-600",
     icon: <Users className="w-6 h-6" />,
@@ -55,6 +61,22 @@ const projects = [
 export default function Projects() {
   const [selectedProject, setSelectedProject] = useState(projects[0])
   const [hoveredProject, setHoveredProject] = useState<number | null>(null)
+  const [filter, setFilter] = useState("all")
+
+  // Filter projects based on category
+  const filteredProjects = projects.filter(project => 
+    filter === "all" || project.category.toLowerCase() === filter.toLowerCase()
+  )
+
+  // Get unique categories for filter buttons
+  const categories = ["all", ...Array.from(new Set(projects.map(p => p.category)))]
+
+  // Auto-select first project when filter changes
+  useEffect(() => {
+    if (filteredProjects.length > 0) {
+      setSelectedProject(filteredProjects[0])
+    }
+  }, [filter])
 
   return (
     <section id="projects" className="py-20 bg-white dark:bg-slate-900 relative overflow-hidden">
@@ -83,21 +105,39 @@ export default function Projects() {
               Projects
             </motion.span>
           </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-8">
             Innovative solutions built with modern technologies and best practices
           </p>
+
+          {/* Category Filter */}
+          <div className="flex flex-wrap justify-center gap-2 mb-8">
+            {categories.map((category) => (
+              <motion.button
+                key={category}
+                onClick={() => setFilter(category)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                  filter === category
+                    ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg"
+                    : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                }`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {category === "all" ? "All Projects" : category}
+              </motion.button>
+            ))}
+          </div>
         </motion.div>
 
         <div className="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {/* Project Cards */}
           <div className="lg:col-span-2 grid gap-6">
-            {projects.map((project, index) => (
+            {filteredProjects.map((project, index) => (
               <motion.div
                 key={project.id}
                 initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.2 }}
-                viewport={{ once: true }}
                 className={`group relative cursor-pointer transition-all duration-500 ${
                   selectedProject.id === project.id
                     ? "transform scale-105 z-10"
@@ -113,8 +153,14 @@ export default function Projects() {
                   {/* Gradient overlay */}
                   <div className={`absolute inset-0 bg-gradient-to-r ${project.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500 rounded-2xl`}></div>
                   
-                  {/* Status badge */}
-                  <div className="absolute top-4 right-4 z-10">
+                  {/* Status and Featured badges */}
+                  <div className="absolute top-4 right-4 z-10 flex gap-2">
+                    {project.featured && (
+                      <span className="flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                        <Star className="w-3 h-3 fill-current" />
+                        Featured
+                      </span>
+                    )}
                     <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
                       project.status === "Live" 
                         ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
@@ -138,9 +184,14 @@ export default function Projects() {
                         <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
                           {project.title}
                         </h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
-                          {project.category}
-                        </p>
+                        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                          <span className="font-medium">{project.category}</span>
+                          <span>•</span>
+                          <div className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            {project.year}
+                          </div>
+                        </div>
                       </div>
                     </div>
 
@@ -226,9 +277,14 @@ export default function Projects() {
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
                     {selectedProject.title}
                   </h3>
-                  <p className="text-gray-500 dark:text-gray-400">
-                    {selectedProject.category}
-                  </p>
+                  <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                    <span>{selectedProject.category}</span>
+                    <span>•</span>
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" />
+                      {selectedProject.year}
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -241,7 +297,7 @@ export default function Projects() {
                 <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
                   Key Features
                 </h4>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 gap-2">
                   {selectedProject.features.map((feature, index) => (
                     <motion.div
                       key={feature}

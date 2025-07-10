@@ -7,18 +7,43 @@ import jsPDF from "jspdf"
 
 export default function Hero() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 })
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
+    // Set client-side flag
+    setIsClient(true)
+    
     if (typeof window === "undefined") return;
+    
+    // Initialize window size
+    setWindowSize({
+      width: window.innerWidth,
+      height: window.innerHeight
+    })
+    
     const updateMousePosition = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY })
     }
 
+    const updateWindowSize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      })
+    }
+
     window.addEventListener("mousemove", updateMousePosition)
-    return () => window.removeEventListener("mousemove", updateMousePosition)
+    window.addEventListener("resize", updateWindowSize)
+    
+    return () => {
+      window.removeEventListener("mousemove", updateMousePosition)
+      window.removeEventListener("resize", updateWindowSize)
+    }
   }, [])
 
   const scrollToAbout = () => {
+    if (typeof window === "undefined") return;
     const element = document.getElementById("about")
     if (element) {
       element.scrollIntoView({ behavior: "smooth" })
@@ -188,13 +213,15 @@ export default function Hero() {
     } catch (error) {
       console.error("Error generating PDF:", error)
       // Fallback to text file if PDF generation fails
-      const link = document.createElement("a")
-      link.href = "/cv/Nikhil_Patil_CV.txt"
-      link.download = "Nikhil_Patil_CV.txt"
-      link.target = "_blank"
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
+      if (typeof window !== "undefined" && typeof document !== "undefined") {
+        const link = document.createElement("a")
+        link.href = "/cv/Nikhil_Patil_CV.txt"
+        link.download = "Nikhil_Patil_CV.txt"
+        link.target = "_blank"
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      }
     }
   }
 
@@ -230,25 +257,27 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Floating particles */}
-      <div className="absolute inset-0">
-        {[...Array(15)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full opacity-30"
-            animate={{
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight,
-              scale: [1, 1.2, 1],
-            }}
-            transition={{
-              duration: Math.random() * 3 + 2,
-              repeat: Infinity,
-              repeatType: "reverse",
-            }}
-          />
-        ))}
-      </div>
+      {/* Floating particles - Only render on client side */}
+      {isClient && windowSize.width > 0 && (
+        <div className="absolute inset-0">
+          {[...Array(15)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full opacity-30"
+              animate={{
+                x: Math.random() * windowSize.width,
+                y: Math.random() * windowSize.height,
+                scale: [1, 1.2, 1],
+              }}
+              transition={{
+                duration: Math.random() * 3 + 2,
+                repeat: Infinity,
+                repeatType: "reverse",
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       <div className="container mx-auto px-4 text-center relative z-10">
         <div className="max-w-4xl mx-auto">
